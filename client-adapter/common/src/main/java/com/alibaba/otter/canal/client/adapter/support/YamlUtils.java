@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -55,6 +57,7 @@ public class YamlUtils {
     public static <T> T ymlToObj(String prefix, String content, Class<T> clazz, String charset,
                                  Properties baseProperties) {
         try {
+            Properties currentProperties = (Properties) ObjectUtils.clone(baseProperties);
             prefix = StringUtils.trimToEmpty(prefix);
             byte[] contentBytes;
             if (charset == null) {
@@ -83,9 +86,9 @@ public class YamlUtils {
                 }
             }
 
-            if (baseProperties != null) {
-                baseProperties.putAll(properties);
-                properties = baseProperties;
+            if (currentProperties != null) {
+                currentProperties.putAll(properties);
+                properties = currentProperties;
             }
 
             ConfigurationPropertySource sources = new MapConfigurationPropertySource(properties);
