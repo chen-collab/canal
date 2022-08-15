@@ -1,11 +1,10 @@
 package com.alibaba.otter.canal.client.adapter.rdb.config;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import com.alibaba.otter.canal.client.adapter.support.AdapterConfig;
 import org.apache.commons.lang.StringUtils;
 
-import com.alibaba.otter.canal.client.adapter.support.AdapterConfig;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * RDB表映射配置
@@ -105,6 +104,8 @@ public class MappingConfig implements AdapterConfig {
         private boolean             caseInsensitive = false;                 // 目标表不区分大小写，默认是否
 
         private String              etlCondition;                            // etl条件sql
+
+        private Map<String, String>      filterCondition;                            // 过滤条件sql
 
         private int                 readBatch       = 5000;
         private int                 commitBatch     = 5000;                  // etl等批量提交大小
@@ -220,6 +221,14 @@ public class MappingConfig implements AdapterConfig {
 
         public void setAllMapColumns(Map<String, String> allMapColumns) {
             this.allMapColumns = allMapColumns;
+        }
+
+        public Map<String, String> getFilterCondition() {
+            return filterCondition;
+        }
+
+        public void setFilterCondition(Map<String, String> filterCondition) {
+            this.filterCondition = filterCondition;
         }
     }
 }
