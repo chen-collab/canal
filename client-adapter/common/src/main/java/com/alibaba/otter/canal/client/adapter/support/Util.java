@@ -1,5 +1,16 @@
 package com.alibaba.otter.canal.client.adapter.support;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 import java.io.File;
 import java.net.URL;
 import java.sql.*;
@@ -14,18 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
 public class Util {
 
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
@@ -37,8 +36,11 @@ public class Util {
      */
     public static Object sqlRS(DataSource ds, String sql, Function<ResultSet, Object> fun) {
         try (Connection conn = ds.getConnection();
-                Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
-            stmt.setFetchSize(Integer.MIN_VALUE);
+             Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+            DruidDataSource dataSource = (DruidDataSource) ds;
+            if (!"sqlserver".equals(dataSource.getDbType())) {
+                stmt.setFetchSize(Integer.MIN_VALUE);
+            }
             try (ResultSet rs = stmt.executeQuery(sql)) {
                 return fun.apply(rs);
             }
@@ -50,8 +52,7 @@ public class Util {
 
     public static Object sqlRS(DataSource ds, String sql, List<Object> values, Function<ResultSet, Object> fun) {
         try (Connection conn = ds.getConnection()) {
-            try (PreparedStatement pstmt = conn
-                .prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
                 pstmt.setFetchSize(Integer.MIN_VALUE);
                 if (values != null) {
                     for (int i = 0; i < values.size(); i++) {
@@ -71,8 +72,8 @@ public class Util {
     /**
      * sql执行获取resultSet
      *
-     * @param conn sql connection
-     * @param sql sql
+     * @param conn     sql connection
+     * @param sql      sql
      * @param consumer 回调方法
      */
     public static void sqlRS(Connection conn, String sql, Consumer<ResultSet> consumer) {
@@ -97,8 +98,7 @@ public class Util {
         }
         File file = null;
         if (path != null) {
-            file = new File(
-                path + ".." + File.separator + Constant.CONF_DIR + File.separator + StringUtils.trimToEmpty(subConf));
+            file = new File(path + ".." + File.separator + Constant.CONF_DIR + File.separator + StringUtils.trimToEmpty(subConf));
             if (!file.exists()) {
                 file = new File(path + StringUtils.trimToEmpty(subConf));
             }
@@ -130,77 +130,54 @@ public class Util {
     }
 
     public static ThreadPoolExecutor newFixedThreadPool(int nThreads, long keepAliveTime) {
-        return new ThreadPoolExecutor(nThreads,
-            nThreads,
-            keepAliveTime,
-            TimeUnit.MILLISECONDS,
-            new SynchronousQueue<>(),
-            (r, exe) -> {
-                if (!exe.isShutdown()) {
-                    try {
-                        exe.getQueue().put(r);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
+        return new ThreadPoolExecutor(nThreads, nThreads, keepAliveTime, TimeUnit.MILLISECONDS, new SynchronousQueue<>(), (r, exe) -> {
+            if (!exe.isShutdown()) {
+                try {
+                    exe.getQueue().put(r);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-            });
+            }
+        });
     }
 
     public static ThreadPoolExecutor newSingleThreadExecutor(long keepAliveTime) {
-        return new ThreadPoolExecutor(1,
-            1,
-            keepAliveTime,
-            TimeUnit.MILLISECONDS,
-            new SynchronousQueue<>(),
-            (r, exe) -> {
-                if (!exe.isShutdown()) {
-                    try {
-                        exe.getQueue().put(r);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
+        return new ThreadPoolExecutor(1, 1, keepAliveTime, TimeUnit.MILLISECONDS, new SynchronousQueue<>(), (r, exe) -> {
+            if (!exe.isShutdown()) {
+                try {
+                    exe.getQueue().put(r);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-            });
+            }
+        });
     }
 
     public static ThreadPoolExecutor newFixedDaemonThreadPool(int nThreads, long keepAliveTime) {
-        return new ThreadPoolExecutor(nThreads,
-                nThreads,
-                keepAliveTime,
-                TimeUnit.MILLISECONDS,
-                new SynchronousQueue<>(),
-                DaemonThreadFactory.daemonThreadFactory,
-                (r, exe) -> {
-                    if (!exe.isShutdown()) {
-                        try {
-                            exe.getQueue().put(r);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                    }
+        return new ThreadPoolExecutor(nThreads, nThreads, keepAliveTime, TimeUnit.MILLISECONDS, new SynchronousQueue<>(), DaemonThreadFactory.daemonThreadFactory, (r, exe) -> {
+            if (!exe.isShutdown()) {
+                try {
+                    exe.getQueue().put(r);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-        );
+            }
+        });
     }
 
     public static ThreadPoolExecutor newSingleDaemonThreadExecutor(long keepAliveTime) {
-        return new ThreadPoolExecutor(1,
-                1,
-                keepAliveTime,
-                TimeUnit.MILLISECONDS,
-                new SynchronousQueue<>(),
-                DaemonThreadFactory.daemonThreadFactory,
-                (r, exe) -> {
-                    if (!exe.isShutdown()) {
-                        try {
-                            exe.getQueue().put(r);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                    }
-                });
+        return new ThreadPoolExecutor(1, 1, keepAliveTime, TimeUnit.MILLISECONDS, new SynchronousQueue<>(), DaemonThreadFactory.daemonThreadFactory, (r, exe) -> {
+            if (!exe.isShutdown()) {
+                try {
+                    exe.getQueue().put(r);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+        });
     }
 
-    public final static String  timeZone;    // 当前时区
+    public final static String timeZone;    // 当前时区
     private static DateTimeZone dateTimeZone;
 
     static {
@@ -244,14 +221,13 @@ public class Util {
         return dateTime.toDate();
     }
 
-    private static LoadingCache<String, DateTimeFormatter> dateFormatterCache = CacheBuilder.newBuilder()
-        .build(new CacheLoader<String, DateTimeFormatter>() {
+    private static LoadingCache<String, DateTimeFormatter> dateFormatterCache = CacheBuilder.newBuilder().build(new CacheLoader<String, DateTimeFormatter>() {
 
-            @Override
-            public DateTimeFormatter load(String key) {
-                return DateTimeFormatter.ofPattern(key);
-            }
-        });
+        @Override
+        public DateTimeFormatter load(String key) {
+            return DateTimeFormatter.ofPattern(key);
+        }
+    });
 
     public static Date parseDate2(String datetimeStr) {
         if (StringUtils.isEmpty(datetimeStr)) {
