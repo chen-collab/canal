@@ -266,6 +266,16 @@ public class SyncUtil {
         return result;
     }
 
+    public static String getSrcTableName(MappingConfig.DbMapping dbMapping, String dbType) {
+        String result = "";
+        String backtick = getBacktickByDbType(dbType);
+        if (StringUtils.isNotEmpty(dbMapping.getDatabase())) {
+            result += (backtick + dbMapping.getDatabase() + backtick + ".");
+        }
+        result += (backtick + dbMapping.getTable() + backtick);
+        return result;
+    }
+
     /**
      * 根据DbType返回反引号或空字符串
      *
