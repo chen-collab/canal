@@ -1,18 +1,16 @@
 package com.alibaba.otter.canal.client.adapter.support;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.google.common.base.Joiner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.sql.DataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.druid.pool.DruidDataSource;
-import com.google.common.base.Joiner;
 
 public abstract class AbstractEtlService {
 
@@ -26,6 +24,8 @@ public abstract class AbstractEtlService {
         this.type = type;
         this.config = config;
     }
+
+
 
     protected EtlResult importData(String sql, List<String> params) {
         EtlResult etlResult = new EtlResult();
@@ -42,6 +42,7 @@ public abstract class AbstractEtlService {
             DruidDataSource dataSource = DatasourceConfig.DATA_SOURCES.get(config.getDataSourceKey());
 
             List<Object> values = new ArrayList<>();
+
             // 拼接条件
             if (config.getMapping().getEtlCondition() != null && params != null) {
                 String etlCondition = config.getMapping().getEtlCondition();
@@ -49,7 +50,9 @@ public abstract class AbstractEtlService {
                     etlCondition = etlCondition.replace("{}", "?");
                     values.add(param);
                 }
-
+                if(sql.contains("where")){
+                    etlCondition = etlCondition.replace("where","and");
+                }
                 sql += " " + etlCondition;
             }
 
