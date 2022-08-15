@@ -1,19 +1,5 @@
 package com.alibaba.otter.canal.client.adapter.es7x.etl;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-
 import com.alibaba.otter.canal.client.adapter.es.core.config.ESSyncConfig;
 import com.alibaba.otter.canal.client.adapter.es.core.config.ESSyncConfig.ESMapping;
 import com.alibaba.otter.canal.client.adapter.es.core.config.SchemaItem.FieldItem;
@@ -29,6 +15,18 @@ import com.alibaba.otter.canal.client.adapter.support.AbstractEtlService;
 import com.alibaba.otter.canal.client.adapter.support.AdapterConfig;
 import com.alibaba.otter.canal.client.adapter.support.EtlResult;
 import com.alibaba.otter.canal.client.adapter.support.Util;
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * ES ETL Service
@@ -51,7 +49,7 @@ public class ESEtlService extends AbstractEtlService {
 
     public EtlResult importData(List<String> params) {
         ESMapping mapping = config.getEsMapping();
-        logger.info("start etl to import data to index: {}", mapping.get_index());
+        logger.info("start etl to import data to index: {}", mapping.getIndex());
         String sql = mapping.getSql();
         return importData(sql, params);
     }
@@ -78,7 +76,7 @@ public class ESEtlService extends AbstractEtlService {
                             }
 
                             // 如果是主键字段则不插入
-                            if (fieldItem.getFieldName().equals(mapping.get_id())) {
+                            if (fieldItem.getFieldName().equals(mapping.getId())) {
                                 idVal = esTemplate.getValFromRS(mapping, rs, fieldName, fieldName);
                             } else {
                                 Object val = esTemplate.getValFromRS(mapping, rs, fieldName, fieldName);
@@ -118,7 +116,7 @@ public class ESEtlService extends AbstractEtlService {
                             String parentVal = (String) esFieldData.remove("$parent_routing");
                             if (mapping.isUpsert()) {
                                 ESUpdateRequest esUpdateRequest = this.esConnection.new ES7xUpdateRequest(
-                                    mapping.get_index(),
+                                    mapping.getIndex(),
                                     idVal.toString()).setDoc(esFieldData).setDocAsUpsert(true);
 
                                 if (StringUtils.isNotEmpty(parentVal)) {
@@ -128,7 +126,7 @@ public class ESEtlService extends AbstractEtlService {
                                 esBulkRequest.add(esUpdateRequest);
                             } else {
                                 ESIndexRequest esIndexRequest = this.esConnection.new ES7xIndexRequest(
-                                    mapping.get_index(),
+                                    mapping.getIndex(),
                                     idVal.toString()).setSource(esFieldData);
                                 if (StringUtils.isNotEmpty(parentVal)) {
                                     esIndexRequest.setRouting(parentVal);
@@ -137,13 +135,13 @@ public class ESEtlService extends AbstractEtlService {
                             }
                         } else {
                             idVal = esFieldData.get(mapping.getPk());
-                            ESSearchRequest esSearchRequest = this.esConnection.new ESSearchRequest(mapping.get_index())
+                            ESSearchRequest esSearchRequest = this.esConnection.new ESSearchRequest(mapping.getIndex())
                                 .setQuery(QueryBuilders.termQuery(mapping.getPk(), idVal))
                                 .size(10000);
                             SearchResponse response = esSearchRequest.getResponse();
                             for (SearchHit hit : response.getHits()) {
                                 ESUpdateRequest esUpdateRequest = this.esConnection.new ES7xUpdateRequest(
-                                    mapping.get_index(),
+                                    mapping.getIndex(),
                                     hit.getId()).setDoc(esFieldData);
                                 esBulkRequest.add(esUpdateRequest);
                             }
@@ -162,7 +160,7 @@ public class ESEtlService extends AbstractEtlService {
                                     (System.currentTimeMillis() - batchBegin),
                                     (System.currentTimeMillis() - esBatchBegin),
                                     esBulkRequest.numberOfActions(),
-                                    mapping.get_index());
+                                    mapping.getIndex());
                             }
                             batchBegin = System.currentTimeMillis();
                             esBulkRequest.resetBulk();
@@ -182,12 +180,12 @@ public class ESEtlService extends AbstractEtlService {
                                 (System.currentTimeMillis() - batchBegin),
                                 (System.currentTimeMillis() - esBatchBegin),
                                 esBulkRequest.numberOfActions(),
-                                mapping.get_index());
+                                mapping.getIndex());
                         }
                     }
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
-                    errMsg.add(mapping.get_index() + " etl failed! ==>" + e.getMessage());
+                    errMsg.add(mapping.getIndex() + " etl failed! ==>" + e.getMessage());
                     throw new RuntimeException(e);
                 }
                 return count;
