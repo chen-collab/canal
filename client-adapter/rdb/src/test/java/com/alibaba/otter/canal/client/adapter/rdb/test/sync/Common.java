@@ -1,12 +1,12 @@
 package com.alibaba.otter.canal.client.adapter.rdb.test.sync;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alibaba.otter.canal.client.adapter.rdb.RdbAdapter;
 import com.alibaba.otter.canal.client.adapter.rdb.test.TestConstant;
 import com.alibaba.otter.canal.client.adapter.support.DatasourceConfig;
 import com.alibaba.otter.canal.client.adapter.support.OuterAdapterConfig;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Common {
 
@@ -15,12 +15,12 @@ public class Common {
 
         OuterAdapterConfig outerAdapterConfig = new OuterAdapterConfig();
         outerAdapterConfig.setName("rdb");
-        outerAdapterConfig.setKey("oracle1");
+        outerAdapterConfig.setKey("sqlserver");
         Map<String, String> properties = new HashMap<>();
-        properties.put("jdbc.driveClassName", "oracle.jdbc.OracleDriver");
-        properties.put("jdbc.url", "jdbc:oracle:thin:@127.0.0.1:49161:XE");
-        properties.put("jdbc.username", "mytest");
-        properties.put("jdbc.password", "m121212");
+        properties.put("jdbc.driveClassName", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        properties.put("jdbc.url", "jdbc:sqlserver://192.168.3.128:1433;DatabaseName=db_test");
+        properties.put("jdbc.username", "sa");
+        properties.put("jdbc.password", "yskj123456");
         outerAdapterConfig.setProperties(properties);
 
         RdbAdapter adapter = new RdbAdapter();
