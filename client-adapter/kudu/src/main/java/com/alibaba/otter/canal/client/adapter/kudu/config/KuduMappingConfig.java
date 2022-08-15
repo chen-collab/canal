@@ -1,11 +1,10 @@
 package com.alibaba.otter.canal.client.adapter.kudu.config;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import com.alibaba.otter.canal.client.adapter.support.AdapterConfig;
 import org.apache.commons.lang.StringUtils;
 
-import com.alibaba.otter.canal.client.adapter.support.AdapterConfig;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author liuyadong
@@ -97,6 +96,7 @@ public class KuduMappingConfig implements AdapterConfig {
 
         private String              etlCondition;                       // etl条件sql
 
+
         private int                 readBatch   = 5000;
         private int                 commitBatch = 5000;                 // etl等批量提交大小
 
@@ -172,6 +172,8 @@ public class KuduMappingConfig implements AdapterConfig {
         public void setEtlCondition(String etlCondition) {
             this.etlCondition = etlCondition;
         }
+
+
 
         public int getReadBatch() {
             return readBatch;
