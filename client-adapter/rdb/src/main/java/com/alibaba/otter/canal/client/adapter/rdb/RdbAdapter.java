@@ -1,20 +1,5 @@
 package com.alibaba.otter.canal.client.adapter.rdb;
 
-import com.alibaba.otter.canal.client.adapter.support.FileName2KeyMapping;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.JdbcUtils;
@@ -27,11 +12,16 @@ import com.alibaba.otter.canal.client.adapter.rdb.service.RdbEtlService;
 import com.alibaba.otter.canal.client.adapter.rdb.service.RdbMirrorDbSyncService;
 import com.alibaba.otter.canal.client.adapter.rdb.service.RdbSyncService;
 import com.alibaba.otter.canal.client.adapter.rdb.support.SyncUtil;
-import com.alibaba.otter.canal.client.adapter.support.Dml;
-import com.alibaba.otter.canal.client.adapter.support.EtlResult;
-import com.alibaba.otter.canal.client.adapter.support.OuterAdapterConfig;
-import com.alibaba.otter.canal.client.adapter.support.SPI;
-import com.alibaba.otter.canal.client.adapter.support.Util;
+import com.alibaba.otter.canal.client.adapter.support.*;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * RDB适配器实现类
@@ -42,22 +32,22 @@ import com.alibaba.otter.canal.client.adapter.support.Util;
 @SPI("rdb")
 public class RdbAdapter implements OuterAdapter {
 
-    private static Logger                           logger              = LoggerFactory.getLogger(RdbAdapter.class);
+    private static Logger logger = LoggerFactory.getLogger(RdbAdapter.class);
 
-    private Map<String, MappingConfig>              rdbMapping          = new ConcurrentHashMap<>();                // 文件名对应配置
-    private Map<String, Map<String, MappingConfig>> mappingConfigCache  = new ConcurrentHashMap<>();                // 库名-表名对应配置
-    private Map<String, MirrorDbConfig>             mirrorDbConfigCache = new ConcurrentHashMap<>();                // 镜像库配置
+    private Map<String, MappingConfig> rdbMapping = new ConcurrentHashMap<>();                // 文件名对应配置
+    private Map<String, Map<String, MappingConfig>> mappingConfigCache = new ConcurrentHashMap<>();                // 库名-表名对应配置
+    private Map<String, MirrorDbConfig> mirrorDbConfigCache = new ConcurrentHashMap<>();                // 镜像库配置
 
-    private DruidDataSource                         dataSource;
+    private DruidDataSource dataSource;
 
-    private RdbSyncService                          rdbSyncService;
-    private RdbMirrorDbSyncService                  rdbMirrorDbSyncService;
+    private RdbSyncService rdbSyncService;
+    private RdbMirrorDbSyncService rdbMirrorDbSyncService;
 
-    private RdbConfigMonitor                        rdbConfigMonitor;
+    private RdbConfigMonitor rdbConfigMonitor;
 
-    private Properties                              envProperties;
+    private Properties envProperties;
 
-    private OuterAdapterConfig                      configuration;
+    private OuterAdapterConfig configuration;
 
     public Map<String, MappingConfig> getRdbMapping() {
         return rdbMapping;
@@ -80,7 +70,7 @@ public class RdbAdapter implements OuterAdapter {
     public void init(OuterAdapterConfig configuration, Properties envProperties) {
         this.envProperties = envProperties;
         this.configuration = configuration;
-      
+
         // 从jdbc url获取db类型
         Map<String, String> properties = configuration.getProperties();
         String dbType = JdbcUtils.getDbType(properties.get("jdbc.url"), null);
@@ -131,16 +121,16 @@ public class RdbAdapter implements OuterAdapter {
         // String commitSize = properties.get("commitSize");
 
         boolean skipDupException = BooleanUtils.toBoolean(configuration.getProperties()
-            .getOrDefault("skipDupException", "true"));
+                .getOrDefault("skipDupException", "true"));
         rdbSyncService = new RdbSyncService(dataSource,
-            threads != null ? Integer.valueOf(threads) : null,
-            skipDupException);
+                threads != null ? Integer.valueOf(threads) : null,
+                skipDupException);
 
         rdbMirrorDbSyncService = new RdbMirrorDbSyncService(mirrorDbConfigCache,
-            dataSource,
-            threads != null ? Integer.valueOf(threads) : null,
-            rdbSyncService.getColumnsTypeCache(),
-            skipDupException);
+                dataSource,
+                threads != null ? Integer.valueOf(threads) : null,
+                rdbSyncService.getColumnsTypeCache(),
+                skipDupException);
 
         rdbConfigMonitor = new RdbConfigMonitor();
         rdbConfigMonitor.init(configuration.getKey(), this, envProperties);
@@ -169,7 +159,7 @@ public class RdbAdapter implements OuterAdapter {
     /**
      * ETL方法
      *
-     * @param task 任务名, 对应配置名
+     * @param task   任务名, 对应配置名
      * @param params etl筛选条件
      * @return ETL结果
      */
