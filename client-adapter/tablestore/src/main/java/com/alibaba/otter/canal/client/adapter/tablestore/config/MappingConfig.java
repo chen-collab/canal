@@ -221,6 +221,8 @@ public class MappingConfig implements AdapterConfig {
             return etlCondition;
         }
 
+
+
         public void setEtlCondition(String etlCondition) {
             this.etlCondition = etlCondition;
         }
