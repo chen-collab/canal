@@ -1,18 +1,12 @@
 package com.alibaba.otter.canal.client.adapter.rdb.test.sync;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.otter.canal.client.adapter.rdb.RdbAdapter;
+import com.alibaba.otter.canal.client.adapter.support.Dml;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.alibaba.otter.canal.client.adapter.rdb.RdbAdapter;
-import com.alibaba.otter.canal.client.adapter.support.Dml;
+import java.util.*;
 @Ignore
 public class OracleSyncTest {
 
@@ -29,16 +23,16 @@ public class OracleSyncTest {
         dml.setDestination("example");
         dml.setTs(new Date().getTime());
         dml.setType("INSERT");
-        dml.setDatabase("mytest");
+        dml.setDatabase("mytest1");
         dml.setTable("user");
         List<Map<String, Object>> dataList = new ArrayList<>();
         Map<String, Object> data = new LinkedHashMap<>();
         dataList.add(data);
-        data.put("id", 1L);
-        data.put("name", "Eric");
-        data.put("role_id", 1L);
-        data.put("c_time", new Date());
-        data.put("test1", "sdfasdfawe中国asfwef");
+        data.put("id", 533558L);
+        data.put("name", "sdfasdfawe中国asfwef");
+//        data.put("role_id", 1L);
+//        data.put("c_time", new Date());
+//        data.put("test1", "sdfasdfawe中国asfwef");
         dml.setData(dataList);
 
         rdbAdapter.sync(Collections.singletonList(dml));

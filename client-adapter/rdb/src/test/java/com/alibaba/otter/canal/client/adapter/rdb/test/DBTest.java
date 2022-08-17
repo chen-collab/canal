@@ -1,16 +1,15 @@
 package com.alibaba.otter.canal.client.adapter.rdb.test;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.alibaba.druid.pool.DruidDataSource;
 
 @Ignore
 public class DBTest {
@@ -24,9 +23,9 @@ public class DBTest {
         // dataSource.setPassword("m121212");
 
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mytest?useUnicode=true");
+        dataSource.setUrl("jdbc:mysql://192.168.3.128:3306/mytest1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false");
         dataSource.setUsername("root");
-        dataSource.setPassword("121212");
+        dataSource.setPassword("yskj123456");
 
         dataSource.setInitialSize(1);
         dataSource.setMinIdle(1);
@@ -40,17 +39,14 @@ public class DBTest {
         Connection conn = dataSource.getConnection();
 
         conn.setAutoCommit(false);
-        PreparedStatement pstmt = conn.prepareStatement("insert into user (id,name,role_id,c_time,test1,test2) values (?,?,?,?,?,?)");
+        PreparedStatement pstmt = conn.prepareStatement("insert into user (id,name) values (?,?)");
 
         java.util.Date now = new java.util.Date();
         for (int i = 1; i <= 10000; i++) {
             pstmt.clearParameters();
             pstmt.setLong(1, (long) i);
             pstmt.setString(2, "test_" + i);
-            pstmt.setLong(3, (long) i % 4 + 1);
-            pstmt.setDate(4, new java.sql.Date(now.getTime()));
-            pstmt.setString(5, null);
-            pstmt.setBytes(6, null);
+
 
             pstmt.execute();
             if (i % 5000 == 0) {

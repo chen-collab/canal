@@ -1,0 +1,41 @@
+dataSourceKey: defaultDS
+destination: example
+groupId: g1
+outerAdapterKey: sqlserver12
+concurrent: true
+dbMapping:
+  database: sth-clinic-new
+  table: cli_suntaiherecipe_info
+  targetTable: middleDB_FQ.[dbo].[kb_jyk1]
+  targetPk:
+    id: id
+  targetColumns:
+    id: id
+    CFSB: CFSB
+    JYFA: JYFA
+    JYDH: JYDH
+    JZKH: JZKH
+    XM: XM
+    XB: XB
+    NL: NL
+    NSYQ: NSYQ
+    PSDZ: PSDZ
+    LXDH: LXDH
+    JZYS: JZYS
+    ZD: ZD
+    JYTS: JYTS
+    MTFS: MTFS
+    JYZL: JYZL
+    YYFS: YYFS
+    ZZL: ZZL
+    SJRL: SJRL
+    PSRQ: PSRQ
+    BZ: BZ
+    JSBZ: JSBZ
+    ZFBZ: ZFBZ
+    BQH: BQH
+    BCH: BCH
+  etlCondition: "where hospital_id = {}"
+  filterCondition:
+    hospital_id: 330012
+  commitBatch: 3000 # 批量提交的大小

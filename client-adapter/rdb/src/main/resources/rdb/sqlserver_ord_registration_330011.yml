@@ -1,0 +1,49 @@
+dataSourceKey: defaultDS
+destination: example
+groupId: g1
+outerAdapterKey: sqlserver11
+concurrent: true
+dbMapping:
+  database: sth-clinic-new
+  table: ord_registration
+  targetTable: middleDB_FT.[dbo].[ord_registration]
+  targetPk:
+    id: id
+  targetColumns:
+    id: id
+    pat_id: pat_id
+    register_date: register_date
+    visit_date: visit_date
+    total_fee: total_fee
+    cash_fee: cash_fee
+    pat_card_num: pat_card_num
+    pat_name: pat_name
+    fee_id: fee_id
+    fee_name: fee_name
+    nature_id: nature_id
+    pat_sex: pat_sex
+    pat_age: pat_age
+    pat_address: pat_address
+    pat_contacts: pat_contacts
+    special_disease_sign: special_disease_sign
+    visited_state: visited_state
+    vis_id: vis_id
+    doctor_id: doctor_id
+    first_sign: first_sign
+    num: num
+    source_detail_id: source_detail_id
+    bin_id: bin_id
+    bin_name: bin_name
+    former_id: former_id
+    ticket_num: ticket_num
+    status: status
+    hospital_id: hospital_id
+    return_sff_id: return_sff_id
+    charges_id: charges_id
+    data_source: data_source
+    time_state: time_state
+
+  etlCondition: "where hospital_id = {}"
+  filterCondition:
+    hospital_id: 330011
+  commitBatch: 3000 # 批量提交的大小

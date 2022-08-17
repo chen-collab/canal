@@ -1,13 +1,16 @@
 package com.alibaba.otter.canal.client.adapter.support;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.util.CollectionUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MappingConfigsLoader {
 
@@ -22,10 +25,19 @@ public class MappingConfigsLoader {
                 configDir = new File(url.getPath() + name + File.separator);
             }
         }
-
+        List<File> fileList = new ArrayList<>();
         File[] files = configDir.listFiles();
         if (files != null) {
             for (File file : files) {
+                if (file.isDirectory()) {
+                    fileList.addAll(Arrays.stream(file.listFiles()).collect(Collectors.toList()));
+                }else {
+                    fileList.add(file);
+                }
+            }
+        }
+        if (fileList.size()>0) {
+            for (File file : fileList) {
                 String fileName = file.getName();
                 if (!fileName.endsWith(".yml")) {
                     continue;

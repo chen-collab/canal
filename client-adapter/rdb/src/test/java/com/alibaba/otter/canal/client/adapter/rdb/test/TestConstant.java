@@ -1,14 +1,14 @@
 package com.alibaba.otter.canal.client.adapter.rdb.test;
 
-import java.sql.SQLException;
-
 import com.alibaba.druid.pool.DruidDataSource;
+
+import java.sql.SQLException;
 
 public class TestConstant {
 
-    public final static String    jdbcUrl      = "jdbc:mysql://127.0.0.1:3306/mytest?useUnicode=true";
+    public final static String    jdbcUrl      = "jdbc:mysql://192.168.3.128:3306/mytest1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false";
     public final static String    jdbcUser     = "root";
-    public final static String    jdbcPassword = "121212";
+    public final static String    jdbcPassword = "yskj123456";
 
     public final static DruidDataSource dataSource;
 

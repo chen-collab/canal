@@ -28,7 +28,7 @@ canal.conf:
       username: root
       password: yskj123456
   canalAdapters:
-    - instance: example # canal instance Name or mq topic name
+    - instance: centerDB # canal instance Name or mq topic name
       groups:
         - groupId: g1
           outerAdapters:
@@ -53,6 +53,13 @@ canal.conf:
 #                jdbc.url: jdbc:sqlserver://canal:1433;DatabaseName=middleDB_FQ
 #                jdbc.username: sa
 #                jdbc.password: yskj123456
+            - name: rdb
+              key: mysql02
+              properties:
+                jdbc.driverClassName: com.mysql.jdbc.Driver
+                jdbc.url: jdbc:mysql://canal:3306/centerdb?useUnicode=true
+                jdbc.username: root
+                jdbc.password: yskj123456
             - name: es7
               key: exampleKey
               hosts: http://canal:9200

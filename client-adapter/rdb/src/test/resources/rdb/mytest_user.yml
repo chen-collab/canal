@@ -1,17 +1,19 @@
 dataSourceKey: defaultDS
 destination: example
-outerAdapterKey: oracle1
+groupId: g1
+outerAdapterKey: sqlserver
 concurrent: true
 dbMapping:
-  database: mytest
+  database: mytest1
   table: user
-  targetTable: mytest.tb_user
+  targetTable: db_test.[dbo].[user]
   targetPk:
     id: id
-  mapAll: true
-#  targetColumns:
-#    id:
-#    name:
-#    role_id:
-#    c_time:
-#    test1:
+#  mapAll: true
+  targetColumns:
+    id:
+    name:
+  etlCondition: "where c_time>={}"
+  filterCondition:
+    hospitalId: 330012
+  commitBatch: 3000 # 批量提交的大小

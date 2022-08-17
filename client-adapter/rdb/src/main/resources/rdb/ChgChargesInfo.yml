@@ -1,0 +1,63 @@
+dataSourceKey: defaultDS
+destination: centerDB
+groupId: g1
+outerAdapterKey: mysql02
+concurrent: true
+dbMapping:
+  database: sth-clinic-new
+  table: chg_charges_info
+  targetDb: centerDB
+  targetTable: chg_charges_info
+  targetPk:
+    id: id
+  targetColumns:
+    id: id
+    bill_date: bill_date
+    pat_id: pat_id
+    pat_name: pat_name
+    nature_id: nature_id
+    nature_name: nature_name
+    fee_id: fee_id
+    fee_name: fee_name
+    pat_card_num: pat_card_num
+    bill_total_fee: bill_total_fee
+    bill_cash_fee: bill_cash_fee
+    bill_odd_fee: bill_odd_fee
+    bill_self_fee: bill_self_fee
+    bill_favor_fee: bill_favor_fee
+    pay_in_hospital: pay_in_hospital
+    dis_id: dis_id
+    sff_id: sff_id
+    sff_name: sff_name
+    day_id: day_id
+    day_date: day_date
+    sff_refund_id: sff_refund_id
+    sff_refund_name: sff_refund_name
+    bill_old_id: bill_old_id
+    bill_thump: bill_thump
+    bill_refund_sign: bill_refund_sign
+    bill_print_info: bill_print_info
+    bill_off_sign: bill_off_sign
+    bill_type: bill_type
+    hospital_id: hospital_id
+    visit_id: visit_id
+    visit_serial_no: visit_serial_no
+    center_serial_no: center_serial_no
+    business_cycle_number: business_cycle_number
+    doctor_sff_id: doctor_sff_id
+    payment_type: payment_type
+    data_source: data_source
+    special_disease_sign: special_disease_sign
+    pay_state: pay_state
+    clr_optins: clr_optins
+    turn_doctor_sff_id: turn_doctor_sff_id
+    bak_sff_id: bak_sff_id
+    bak_sff_refund_id: bak_sff_refund_id
+    bak_doctor_sff_id: bak_doctor_sff_id
+    bak_turn_doctor_sff_id: bak_turn_doctor_sff_id
+
+  etlCondition: "where time_stamp >= {}"
+  commitBatch: 3000 # 批量提交的大小
+
+
+

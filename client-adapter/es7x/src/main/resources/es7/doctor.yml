@@ -1,0 +1,12 @@
+dataSourceKey: defaultDS
+outerAdapterKey: exampleKey     # 对应application.yml中es配置的key
+destination: example
+groupId: g1
+esMapping:
+  index: doctor
+  id: id
+  sql: "select t.hospital_id, t.dep_id, d.dep_name,t.doctor_name, t.doctor_summary,t.doctor_goodat,t.id as id 
+  from pub_doctor t LEFT JOIN
+    pub_departments d ON t.dep_id = d.id"
+  etlCondition: "where t.c_time>={}"
+  commitBatch: 3000

@@ -1,0 +1,26 @@
+dataSourceKey: defaultDS
+destination: example
+groupId: g1
+outerAdapterKey: mysql02
+concurrent: true
+dbMapping:
+  database: clinic-new
+  table: chg_classify_info
+  targetTable: chg_classify_info
+  targetPk:
+    id: id
+  targetColumns:
+    id: id
+                    charges_id: charges_id
+                cls_code: cls_code
+                cls_way: cls_way
+                cls_en_name: cls_en_name
+                cls_china_name: cls_china_name
+                cls_evidence_num: cls_evidence_num
+                cls_classify_fee: cls_classify_fee
+
+  etlCondition: "where time_stamp >= {}"
+        commitBatch: 3000 # 批量提交的大小
+
+
+
