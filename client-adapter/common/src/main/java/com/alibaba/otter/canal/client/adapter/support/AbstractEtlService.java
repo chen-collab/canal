@@ -59,9 +59,10 @@ public abstract class AbstractEtlService {
             if (logger.isDebugEnabled()) {
                 logger.debug("etl sql : {}", sql);
             }
-
+            logger.info("etl sql : {}", sql);
             // 获取总数
             String countSql = "SELECT COUNT(1) FROM ( " + sql + ") _CNT ";
+
             long cnt = (Long) Util.sqlRS(dataSource, countSql, values, rs -> {
                 Long count = null;
                 try {
@@ -73,7 +74,7 @@ public abstract class AbstractEtlService {
                 }
                 return count == null ? 0L : count;
             });
-
+            logger.info("ETL sql: {} 共计{}条数据", countSql,cnt);
             // 当大于1万条记录时开启多线程
             if (cnt >= 10000) {
                 int threadCount = Runtime.getRuntime().availableProcessors();
