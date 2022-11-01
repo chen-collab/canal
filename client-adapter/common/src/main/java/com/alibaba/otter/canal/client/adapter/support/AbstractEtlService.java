@@ -102,7 +102,7 @@ public abstract class AbstractEtlService {
                 }
 
                 for (Future<Boolean> future : futures) {
-                    future.get();
+                   logger.info("执行结果{}", future.get());
                 }
                 executor.shutdown();
             } else {

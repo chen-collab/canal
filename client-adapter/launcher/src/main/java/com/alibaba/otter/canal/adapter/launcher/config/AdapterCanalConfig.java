@@ -50,7 +50,6 @@ public class AdapterCanalConfig extends CanalClientConfig {
     @SuppressWarnings("resource")
     public void setSrcDataSources(Map<String, DatasourceConfig> srcDataSources) {
         this.srcDataSources = srcDataSources;
-
         if (srcDataSources != null) {
             for (Map.Entry<String, DatasourceConfig> entry : srcDataSources.entrySet()) {
                 DatasourceConfig datasourceConfig = entry.getValue();

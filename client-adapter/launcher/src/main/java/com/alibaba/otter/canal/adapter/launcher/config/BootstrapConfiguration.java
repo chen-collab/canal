@@ -29,6 +29,7 @@ public class BootstrapConfiguration {
             remoteConfigLoader.loadRemoteConfig();
             remoteConfigLoader.loadRemoteAdapterConfigs();
             remoteConfigLoader.startMonitor(); // 启动监听
+//            inited = true;
         }
     }
 
