@@ -1,7 +1,6 @@
 package com.alibaba.otter.canal.client.adapter.support;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.springframework.util.CollectionUtils;
+
 
 import java.io.File;
 import java.io.FileInputStream;

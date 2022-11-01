@@ -55,7 +55,7 @@ public class DbRemoteConfigLoader implements RemoteConfigLoader {
         dataSource.setPassword(jdbcPassword);
         dataSource.setInitialSize(1);
         dataSource.setMinIdle(1);
-        dataSource.setMaxActive(1);
+        dataSource.setMaxActive(3);
         dataSource.setMaxWait(60000);
         dataSource.setTimeBetweenEvictionRunsMillis(60000);
         dataSource.setMinEvictableIdleTimeMillis(300000);
