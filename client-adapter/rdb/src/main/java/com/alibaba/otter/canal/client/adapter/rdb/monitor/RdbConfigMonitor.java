@@ -137,7 +137,6 @@ public class RdbConfigMonitor {
         @Override
         public void onFileDelete(File file) {
             super.onFileDelete(file);
-
             try {
                 //删除目录则目录下的配置文件一并删除
                 if(file.isDirectory()){

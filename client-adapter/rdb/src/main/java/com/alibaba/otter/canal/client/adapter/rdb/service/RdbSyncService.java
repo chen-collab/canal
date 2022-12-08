@@ -152,6 +152,7 @@ public class RdbSyncService {
                 String groupId = StringUtils.trimToEmpty(dml.getGroupId());
                 String database = dml.getDatabase();
                 String table = dml.getTable();
+                logger.info("sync: {} {} {} {} {}",destination ,groupId,database,table);
                 Map<String, MappingConfig> configMap;
                 if (envProperties != null && !"tcp".equalsIgnoreCase(envProperties.getProperty("canal.conf.mode"))) {
                     configMap = mappingConfig.get(destination + "-" + groupId + "_" + database + "-" + table);
@@ -222,10 +223,9 @@ public class RdbSyncService {
                         truncate(batchExecutor, config);
                     }
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("DML: {}", JSON.toJSONString(dml, Feature.WriteNulls));
-                }
+//                logger.debug("DML: {}", JSON.toJSONString(dml, Feature.WriteNulls));
             } catch (SQLException e) {
+                logger.info("单条 dml 同步: {}", JSON.toJSONString(dml, Feature.WriteNulls));
                 throw new RuntimeException(e);
             }
         }
@@ -244,7 +244,7 @@ public class RdbSyncService {
                 String filterName = entry.getKey();
                 String filterValue = entry.getValue();
                 String value = ObjectUtils.toString(data.get(filterName));
-                logger.info("filter: {} {} {} {} {}", filterName,filterValue,value,data.containsKey(filterName),filterValue.equals(value));
+//                logger.info("filter: {} {} {} {} {}", filterName,filterValue,value,data.containsKey(filterName),filterValue.equals(value));
                 if(!data.containsKey(filterName)){
                     continue;
                 }
@@ -306,10 +306,11 @@ public class RdbSyncService {
             Object value = data.get(srcColumnName);
             BatchExecutor.setValue(values, type, value);
         }
-
         try {
             batchExecutor.execute(insertSql.toString(), values);
         } catch (SQLException e) {
+            logger.error("Insert into target table, sql: {}", dml.toString());
+            logger.error("Insert SQLException sql: {}", e);
             if (skipDupException && (e.getMessage().contains("Duplicate entry") || e.getMessage().startsWith("ORA-00001:"))) {
                 // ignore
                 // TODO 增加更多关系数据库的主键冲突的错误码
@@ -378,10 +379,14 @@ public class RdbSyncService {
 
         // 拼接主键
         appendCondition(dbMapping, updateSql, ctype, values, data, old);
-        batchExecutor.execute(updateSql.toString(), values);
-        if (logger.isTraceEnabled()) {
-            logger.trace("Update target table, sql: {}", updateSql);
+        try {
+            batchExecutor.execute(updateSql.toString(), values);
+        }catch (SQLException e){
+            logger.info("Update target table : {}", dml);
+            logger.info("Update SQLException sql: {}", e);
+            throw e;
         }
+
     }
 
     /**
@@ -405,7 +410,12 @@ public class RdbSyncService {
         List<Map<String, ?>> values = new ArrayList<>();
         // 拼接主键
         appendCondition(dbMapping, sql, ctype, values, data);
-        batchExecutor.execute(sql.toString(), values);
+        try {
+            batchExecutor.execute(sql.toString(), values);
+        }catch (SQLException e){
+            logger.info("Delete from target table, sql: {}", dml);
+            logger.info("Delete SQLException sql: {}", e);
+        }
         if (logger.isTraceEnabled()) {
             logger.trace("Delete from target table, sql: {}", sql);
         }

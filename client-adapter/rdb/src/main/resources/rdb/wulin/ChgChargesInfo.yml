@@ -1,17 +1,18 @@
-dataSourceKey: defaultDS
-destination: centerDB
+dataSourceKey: wulinDS
+destination: wulin
 groupId: g1
-outerAdapterKey: mysql02
+outerAdapterKey: center
 concurrent: true
 dbMapping:
-  database: sth-clinic-new
+  database: clinic-new
   table: chg_charges_info
-  targetDb: centerDB
   targetTable: chg_charges_info
   targetPk:
-    id: id
+    ID: ID
+    hospital_id: hospital_id
   targetColumns:
-    id: id
+    ID: ID
+    hospital_id: hospital_id
     bill_date: bill_date
     pat_id: pat_id
     pat_name: pat_name
@@ -39,22 +40,24 @@ dbMapping:
     bill_print_info: bill_print_info
     bill_off_sign: bill_off_sign
     bill_type: bill_type
-    hospital_id: hospital_id
     visit_id: visit_id
     visit_serial_no: visit_serial_no
     center_serial_no: center_serial_no
     business_cycle_number: business_cycle_number
     doctor_sff_id: doctor_sff_id
+    turn_doctor_sff_id: turn_doctor_sff_id
+    turn_sff_id: turn_sff_id
     payment_type: payment_type
-    data_source: data_source
+      data_source: data_source
     special_disease_sign: special_disease_sign
     pay_state: pay_state
     clr_optins: clr_optins
-    turn_doctor_sff_id: turn_doctor_sff_id
     bak_sff_id: bak_sff_id
     bak_sff_refund_id: bak_sff_refund_id
     bak_doctor_sff_id: bak_doctor_sff_id
     bak_turn_doctor_sff_id: bak_turn_doctor_sff_id
+    bak_turn_sff_id: bak_turn_sff_id
+    hospital_name: hospital_name
 
   etlCondition: "where time_stamp >= {}"
   commitBatch: 3000 # 批量提交的大小

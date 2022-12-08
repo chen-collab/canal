@@ -1,6 +1,6 @@
 canal:
   manager:
     jdbc:
-      url: jdbc:mysql://canal:3306/canal_manager?useUnicode=true&characterEncoding=UTF-8
-      username: root
-      password: yskj123456
+#      url: jdbc:mysql://192.168.1.38:3306/canal_manager?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+#      username: root
+#      password: yskj123456

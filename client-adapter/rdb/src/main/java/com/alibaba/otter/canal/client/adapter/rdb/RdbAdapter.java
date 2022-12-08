@@ -152,6 +152,7 @@ public class RdbAdapter implements OuterAdapter {
             }
             rdbMirrorDbSyncService.sync(dmls);
         } catch (Exception e) {
+            logger.info("dmls: {} ", dmls);
             throw new RuntimeException(e);
         }
     }

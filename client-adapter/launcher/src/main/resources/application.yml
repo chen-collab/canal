@@ -17,53 +17,25 @@ canal.conf:
   secretKey:
   consumerProperties:
     # canal tcp consumer
-    canal.tcp.server.host: canal:11111
+    canal.tcp.server.host: 192.168.3.128:11111
     canal.tcp.zookeeper.hosts:
     canal.tcp.batch.size: 500
     canal.tcp.username:
     canal.tcp.password:
   srcDataSources:
-    defaultDS:
-      url: jdbc:mysql://canal:3306/sth-clinic-new?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=Asia/Shanghai
+    wulinDS:
+      url: jdbc:mysql://192.168.3.128:3306/clinic-new?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=Asia/Shanghai
       username: root
       password: yskj123456
   canalAdapters:
-    - instance: centerDB # canal instance Name or mq topic name
+    - instance: example # canal instance Name or mq topic name
       groups:
         - groupId: g1
           outerAdapters:
-#            - name: rdb
-#              key: sqlserver11
-#              properties:
-#                jdbc.driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#                jdbc.url: jdbc:sqlserver://canal:1433;DatabaseName=middleDB_FT
-#                jdbc.username: sa
-#                jdbc.password: yskj123456
-#            - name: rdb
-#              key: sqlserver13
-#              properties:
-#                jdbc.driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#                jdbc.url: jdbc:sqlserver://canal:1433;DatabaseName=middleDB_HP
-#                jdbc.username: sa
-#                jdbc.password: yskj123456
-#            - name: rdb
-#              key: sqlserver12
-#              properties:
-#                jdbc.driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#                jdbc.url: jdbc:sqlserver://canal:1433;DatabaseName=middleDB_FQ
-#                jdbc.username: sa
-#                jdbc.password: yskj123456
             - name: rdb
-              key: mysql02
+              key: center
               properties:
                 jdbc.driverClassName: com.mysql.jdbc.Driver
-                jdbc.url: jdbc:mysql://canal:3306/centerdb?useUnicode=true
+                jdbc.url: jdbc:mysql://192.168.3.128:3306/centerdb?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnl
                 jdbc.username: root
                 jdbc.password: yskj123456
-            - name: es7
-              key: exampleKey
-              hosts: http://canal:9200
-              properties:
-                mode: rest
-                cluster.name: docker-cluster
-                security.auth: elastic:es123456     # only used for rest mode

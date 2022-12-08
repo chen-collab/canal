@@ -109,4 +109,16 @@ public class SingleDml {
         map.putAll(data);
         return map;
     }
+
+    @Override
+    public String toString() {
+        return "SingleDml{" +
+                "destination='" + destination + '\'' +
+                ", database='" + database + '\'' +
+                ", table='" + table + '\'' +
+                ", type='" + type + '\'' +
+                ", data=" + data +
+                ", old=" + old +
+                '}';
+    }
 }
